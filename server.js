@@ -29,4 +29,6 @@ app.get('/items', function(request, response) {
     response.json(storage.items);
 });
 
-app.listen(process.env.PORT || 8080)
+app.listen(process.env.PORT || 8080, function(){
+  console.log('Server is running at http://localhost:8080');
+});
