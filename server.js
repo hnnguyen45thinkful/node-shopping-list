@@ -1,4 +1,6 @@
 var express = require('express');
+var bodyParser = require('body-parser');
+var jsonParser = bodyParser.json();
 
 var Storage = {
   add: function(name) {
@@ -27,6 +29,15 @@ app.use(express.static('public'));
 
 app.get('/items', function(request, response) {
     response.json(storage.items);
+});
+
+app.post('/items', jsonParser, function(request, response) {
+    if (!('name' in request.body)) {
+        return response.sendStatus(400);
+    }
+
+    var item = storage.add(request.body.name);
+    response.status(201).json(item);
 });
 
 app.listen(process.env.PORT || 8080, function(){
