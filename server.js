@@ -2,51 +2,27 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
-//Creating the object constructors for add, remove, and update the shopping list.
+//Creating the object constructors methods for add, remove, and update the shopping list.
 var Storage = {
-  add: function(name, id) {
-    var item;
-    if(id==null) {
-      item = {name: name, id: this.setId};
-    }
-    else{
-      item = {name: name, id: id};
-    }
+  add: function(name) {
+    var item = {name: name, id: this.setId};
     this.items.push(item);
-    this.setId += 1; 
+    this.setId += 1;
     return item;
   },
-  remove: function(id) {
-    var targetIndex = null;
-    this.items.forEach(function(item, i){
-      if(item.id == id){
-        targetIndex = i;
-      }
-    });
-    if(targetIndex === null){
-      return false;
-    }
-    else{
-      this.items.splice(targetIndex, 1);
-      return true;
-    }
+  delete: function(id){
+    var index = this.items.indexOf(id);
+    this.items.splice(index, 1);
+    return this.items;
   },
-  update: function(name, id){
-    var targetIndex = null;
-    this.items.forEach(function(item, i){
-      if(item.id == id){
-        targetIndex = i;
+  put: function(id, name){
+    for (var i = 0; i < this.items.length; i++) {
+      if (this.items[i].id == id) {
+        this.items[i].name = name;
+        return this.items[i];
       }
-    });
-    if(targetIndex === null){
-      return this.add(name, id);  
+     }
     }
-    else{
-      this.items[targetIndex].name = name;
-      return this.items[targetIndex];
-    }
-    
-  }
 };
 
 var createStorage = function() {
@@ -57,11 +33,12 @@ var createStorage = function() {
 }
 //Storing the objects for the storage for the user using the shopping list.
 var storage = createStorage();
+//By using add method value to object.
+//storage.add('Broad beans');
+//storage.add('Tomatoes');
+//storage.add('Peppers');
 
-storage.add('Broad beans');
-storage.add('Tomatoes');
-storage.add('Peppers');
-//Creating the app to tell and let express 
+//Creating the app to tell and let express set the app to publiv by .use, .post, .put, and .delete 
 var app = express();
 app.use(express.static('public'));
 //Applying the GET request all items.
@@ -69,6 +46,8 @@ app.get('/items', function(request, response) {
     response.json(storage.items);
 });
 
+// Applying the POST request and then using jsonParser as second argument tells express to use the 
+// jsonParser middleware when requests for the route are made
 app.post('/items', jsonParser, function(request, response) {
     if (!('name' in request.body)) {
         return response.sendStatus(400);
@@ -78,6 +57,34 @@ app.post('/items', jsonParser, function(request, response) {
     response.status(201).json(item);
 });
 
+// Applying the DELETE endpoint for items, identifies them by id sent in request
+app.delete('/items/:id', function(request, response){
+    // Define the variable is the "deleted" of the item that the user wants to delete.
+  var deleted = storage.delete(request.params.id);
+  if (deleted) {
+    response.status(201).json(deleted);
+  } else {
+    response.status(400).json({"Error": "No item found"});
+  }
+});
+
+//Applying the PUT request woth the variable id of the item for the user wants to delete.
+app.put('/items/:id', jsonParser, function(request, response){
+    // By using this variable is the "item" for the item that the person wants to delete or put.
+  if (!request.body) {
+    return response.sendStatus(400);
+  }
+  var item = storage.put(request.params.id, request.body.name);
+  response.status(201).json(item);
+});
+
+
+// Create a error after all of the other app. stops. 
+app.use("/*", function(request, response){
+  response.status(404).json({message: "Not Found"});
+});
+
+//Applying to server 8080 localhost
 app.listen(process.env.PORT || 8080, function(){
   console.log('Server is running at http://localhost:8080');
 });
