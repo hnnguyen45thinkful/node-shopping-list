@@ -34,9 +34,9 @@ var createStorage = function() {
 //Storing the objects for the storage for the user using the shopping list.
 var storage = createStorage();
 //By using add method value to object.
-//storage.add('Broad beans');
-//storage.add('Tomatoes');
-//storage.add('Peppers');
+storage.add('Broad beans');
+storage.add('Tomatoes');
+storage.add('Peppers');
 
 //Creating the app to tell and let express set the app to publiv by .use, .post, .put, and .delete 
 var app = express();
