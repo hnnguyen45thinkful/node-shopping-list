@@ -3,85 +3,94 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
 //Creating the object constructors methods for add, remove, and update the shopping list.
-var Storage = {
-  add: function(name) {
-    var item = {name: name, id: this.setId};
-    this.items.push(item);
-    this.setId += 1;
-    return item;
-  },
-  delete: function(id){
-    var index = this.items.indexOf(id);
-    this.items.splice(index, 1);
-    return this.items;
-  },
-  put: function(id, name){
-    for (var i = 0; i < this.items.length; i++) {
-      if (this.items[i].id == id) {
-        this.items[i].name = name;
-        return this.items[i];
-      }
-     }
+//first here is the storage constructor function
+var Storage = function() {
+  this.items = [];
+  this.id = 0;
+};
+  
+//Here is the add part: push item into storage.items array and increment id number 
+Storage.prototype.add = function(name) {
+  var item = {name: name, id: this.id};
+  this.items.push(item);
+  this.id += 1;
+  return item;
+};
+  
+//Here is the delete part: splice out item with specific id number
+Storage.prototype.delete = function(id) {
+  this.items.forEach(function(object, index, itemArray){
+    if (object.id == id) {
+      itemArray.splice(index, 1);
     }
+  });
+  return this.items;
+};
+  
+//Here is the edit part: changes the name of object item
+Storage.prototype.edit = function(id, newName) {
+  this.items.forEach(function(object, index, itemArray){
+    if (object.id == id) {
+      object.name = newName;
+    }
+  });
+  return this.items;
 };
 
-var createStorage = function() {
-  var storage = Object.create(Storage);
-  storage.items = [];
-  storage.setId = 1;
-  return storage;
-}
-//Storing the objects for the storage for the user using the shopping list.
-var storage = createStorage();
-//By using add method value to object.
+//To create instance with constructor function for the storage function.
+var storage = new Storage();
+
+//Showing the dummy data example
 storage.add('Broad beans');
 storage.add('Tomatoes');
 storage.add('Peppers');
 
 //Creating the app to tell and let express set the app to publiv by .use, .post, .put, and .delete 
 var app = express();
+
+//use static html and css in public dir
 app.use(express.static('public'));
+
 //Applying the GET request all items.
 app.get('/items', function(request, response) {
-    response.json(storage.items);
+  response.json(storage.items);
 });
 
 // Applying the POST request and then using jsonParser as second argument tells express to use the 
 // jsonParser middleware when requests for the route are made
 app.post('/items', jsonParser, function(request, response) {
-    if (!('name' in request.body)) {
-        return response.sendStatus(400);
-    }
-
-    var item = storage.add(request.body.name);
-    response.status(201).json(item);
-});
-
-// Applying the DELETE endpoint for items, identifies them by id sent in request
-app.delete('/items/:id', function(request, response){
-    // Define the variable is the "deleted" of the item that the user wants to delete.
-  var deleted = storage.delete(request.params.id);
-  if (deleted) {
-    response.status(201).json(deleted);
-  } else {
-    response.status(400).json({"Error": "No item found"});
-  }
-});
-
-//Applying the PUT request woth the variable id of the item for the user wants to delete.
-app.put('/items/:id', jsonParser, function(request, response){
-    // By using this variable is the "item" for the item that the person wants to delete or put.
+  //400 Bad request message if body doesn't exist
   if (!request.body) {
     return response.sendStatus(400);
   }
-  var item = storage.put(request.params.id, request.body.name);
+
+  //add item by calling add method with name and return 201 and created a message.
+  var item = storage.add(request.body.name);
   response.status(201).json(item);
 });
 
+// Applying the DELETE endpoint for items, identifies them by id sent in request
+app.delete('/items/:id', jsonParser, function(request, response) {
+  if (!request.body) {
+    return response.sendStatus(400);
+  }
+  
+  //This part is to delete by calling on delete method with id and return 200 Ok msg
+  var item = storage.delete(request.params.id);
+  response.status(200).json(item);
+});
 
-// Create a error after all of the other app. stops. 
-app.use("/*", function(request, response){
-  response.status(404).json({message: "Not Found"});
+//Applying the PUT request woth the variable id of the item for the user wants to delete.
+app.put('/items/:id', jsonParser, function(request, response) {
+  if (!request.body) {
+    return response.sendStatus(400);
+  }
+  //store params into arguments for edit method
+  var id = request.params.id;
+  var newName = request.body.name;
+  //call edit method using params as arugments
+  var item = storage.edit(id, newName);
+  response.status(200).json(item);
 });
 
 //Applying to server 8080 localhost
@@ -89,6 +98,7 @@ app.listen(process.env.PORT || 8080, function(){
   console.log('Server is running at http://localhost:8080');
 });
 
+//exporting the app and storage
 exports.app = app;
 exports.storage = storage;
 
