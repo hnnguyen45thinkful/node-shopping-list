@@ -81,7 +81,7 @@ describe('Shopping List', function() {
       });
   });
   
-  it('should add an item on post', function(done) {
+  it('should add an item on POST', function(done) {
     chai.request(app)
       .post('/items')
       .send({'name': 'Kale'})
@@ -107,7 +107,7 @@ describe('Shopping List', function() {
       });
   });
   
-  it('should edit an item on put', function(done) {
+  it('should edit an item on PUT', function(done) {
     chai.request(app)
       .put('/items/0')
       .send({name: 'Kidney beans'})
@@ -122,7 +122,7 @@ describe('Shopping List', function() {
       });
   });
   
-  it('should delete an item on delete', function(done) {
+  it('should delete an item on DELETE', function(done) {
     chai.request(app)
       .delete('/items/0')
       .end(function(err, res) {
