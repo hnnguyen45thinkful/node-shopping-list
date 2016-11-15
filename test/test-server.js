@@ -27,12 +27,15 @@
 // As you can see, writing tests for all this will save you time from doing it manually, as well as help you think through ways that a user (or hacker) may do unexpected things to break your app.
 
 //From here on the top is the Try It!
-describe('Shopping List', function() {
-    it('should list items on get');
-    it('should add an item on post');
-    it('should edit an item on put');
-    it('should delete an item on delete');
+
+// describe('Shopping List', function() {
+//     it('should list items on get');
+//     it('should add an item on post');
+//     it('should edit an item on put');
+//     it('should delete an item on delete');
+
 //It ends here and the rest is on the bottom.
+
 //     it('should not post to an id that exists');
 //     it('should not post without body data');
 //     it('should not post with something other than valid json');
@@ -103,7 +106,7 @@ describe('Shopping List', function() {
                 done();
             });
     });
-    
+
     it('should edit an item on put');
     it('should delete an item on delete');
 });
