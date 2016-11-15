@@ -33,17 +33,17 @@ describe('Shopping List', function() {
     it('should edit an item on put');
     it('should delete an item on delete');
 //It ends here and the rest is on the bottom.
-    it('should not post to an id that exists');
-    it('should not post without body data');
-    it('should not post with something other than valid json');
-    it('should not put without an id in the endpoint');
-    it('should not put with different id in the endpoint than the body');
-    it('should not put to an id that doesnt exist');
-    it('should not put without body data');
-    it('should not put with something other than valid json');
-    it('should not delete an id that doesn\'t exist');
-    it('should not delete without an id at the endpoint');
-});
+//     it('should not post to an id that exists');
+//     it('should not post without body data');
+//     it('should not post with something other than valid json');
+//     it('should not put without an id in the endpoint');
+//     it('should not put with different id in the endpoint than the body');
+//     it('should not put to an id that doesnt exist');
+//     it('should not put without body data');
+//     it('should not put with something other than valid json');
+//     it('should not delete an id that doesn\'t exist');
+//     it('should not delete without an id at the endpoint');
+// });
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 var chai = require('chai');
